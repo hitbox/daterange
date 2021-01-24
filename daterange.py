@@ -49,8 +49,8 @@ def main(argv=None):
 
     sep = '\0' if args.null else '\n'
 
-    for d in daterange(*rangeargs):
-        print(d.strftime(args.format), end=sep, file=args.output)
+    g = (d.strftime(args.format) for d in daterange(*rangeargs))
+    print(sep.join(g), end='', file=args.output)
 
 
 if __name__ == '__main__':
