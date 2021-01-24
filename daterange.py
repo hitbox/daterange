@@ -4,7 +4,8 @@ import sys
 from datetime import date
 from datetime import timedelta
 
-def daterange(stop_or_start, *args):
+
+def daterange(stop_or_start, stop=None, step=1):
     """
     daterange(stop) -> date generator
     daterange(start, stop[, step]) -> date generator
@@ -12,19 +13,11 @@ def daterange(stop_or_start, *args):
     Like `range` for dates. When start is omitted it defaults to today. start
     and stop are datetime.dates. step must be int.
     """
-    nargs = len(args)
-    if nargs:
-        if nargs > 2:
-            raise TypeError(
-                'daterange expected at most 3 arguments, got %s' % nargs)
-        start = stop_or_start
-        if nargs < 2:
-            args += (1,)
-        stop, step = args
-    else:
+    if stop is None:
         stop = stop_or_start
         start = date.today()
-        step = 1
+    else:
+        start = stop_or_start
     # explicit check here because only simple arithmetic operations occur on
     # start, stop, and step--something could sneak through
     if not (isinstance(start, date) and isinstance(stop, date)):
