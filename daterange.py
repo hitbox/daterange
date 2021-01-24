@@ -4,22 +4,34 @@ import sys
 from datetime import date
 from datetime import timedelta
 
-def daterange(*args):
+def daterange(stop_or_start, *args):
     """
     daterange(stop) -> date generator
     daterange(start, stop[, step]) -> date generator
 
-    Like `range` for dates. When start is omitted it defaults to today.
+    Like `range` for dates. When start is omitted it defaults to today. start
+    and stop are datetime.dates. step must be int.
     """
-    if len(args) == 1:
-        stop = args[0]
+    nargs = len(args)
+    if nargs:
+        if nargs > 2:
+            raise TypeError(
+                'daterange expected at most 3 arguments, got %s' % nargs)
+        start = stop_or_start
+        if nargs < 2:
+            args += (1,)
+        stop, step = args
+    else:
+        stop = stop_or_start
         start = date.today()
         step = 1
-    elif len(args) == 2:
-        start, stop = args
-        step = 1
-    elif len(args) == 3:
-        start, stop, step = args
+    # explicit check here because only simple arithmetic operations occur on
+    # start, stop, and step--something could sneak through
+    if not (isinstance(start, date) and isinstance(stop, date)):
+        raise TypeError(
+            'start and stop must be datetime.date, got %r and %r'
+            % (start, stop))
+    # relying on timedelta for type of step check
     step = timedelta(days=step)
     while start < stop:
         yield start
